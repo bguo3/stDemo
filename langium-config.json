@@ -1,0 +1,17 @@
+{
+  "projectName": "St",
+  "languages": [
+    {
+      "id": "st",
+      "grammar": "src/language-server/st.langium",
+      "fileExtensions": [".st"],
+      "textMate": {
+        "out": "syntaxes/st.tmLanguage.json"
+      },
+      "monarch": {
+        "out": "syntaxes/st.monarch.ts"
+      }
+    }
+  ],
+  "out": "src/language-server/generated"
+}
