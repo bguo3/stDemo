@@ -56,7 +56,7 @@ editorConfig.setMonarchTokensProvider({
 });
 
 editorConfig.setMainCode(`
-person Aaa
+Hello Aaa!
 `);
 
 editorConfig.theme = "vs-dark";
@@ -74,5 +74,5 @@ client.setWorker(lsWorker);
 
 // keep a reference to a promise for when the editor is finished starting, we'll use this to setup the canvas on load
 const startingPromise = client.startEditor(
-  document.getElementById("monaco-editor-root")
+  document.getElementById("monaco-editor-root1")
 );
