@@ -1,4 +1,4 @@
-import { MonacoEditorLanguageClientWrapper } from "./monaco-editor-wrapper/index.js";
+import { MonacoEditorLanguageClientWrapper, vscode } from "./monaco-editor-wrapper/index.js";
 import { buildWorkerDefinition } from "./monaco-editor-workers/index.js";
 
 buildWorkerDefinition(
@@ -57,6 +57,7 @@ editorConfig.setMonarchTokensProvider({
 
 editorConfig.setMainCode(`
 person Aaa
+Hello Aaa!
 `);
 
 editorConfig.theme = "vs-dark";
@@ -76,3 +77,32 @@ client.setWorker(lsWorker);
 const startingPromise = client.startEditor(
   document.getElementById("monaco-editor-root")
 );
+
+let running = false;
+const generateAndDisplay = (() => {
+    if (running) {
+        return;
+    }
+    running = true;
+
+    console.info('generating & running current code...');
+    const value = client.editor.getValue();
+    console.info(value);
+    if (window.localStorage) {
+        window.localStorage.setItem('mainCode', value);
+    }
+    // execute custom command, and receive the response
+    vscode.commands.executeCommand('generateStJson', value).then((stJson) => {
+      console.info('====================');
+      console.info(stJson);
+      console.info('====================');
+    }).catch((e) => {
+      console.error(e);
+    }).finally(() => {
+        console.info('done...');
+        running = false;
+    });
+});
+
+// Updates the mini-logo canvas
+window.generateAndDisplay = generateAndDisplay;

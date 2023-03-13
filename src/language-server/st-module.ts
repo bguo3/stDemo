@@ -1,7 +1,9 @@
 import {
-    createDefaultModule, createDefaultSharedModule, DefaultSharedModuleContext, inject,
+    AbstractExecuteCommandHandler,
+    createDefaultModule, createDefaultSharedModule, DefaultSharedModuleContext, ExecuteCommandAcceptor, inject,
     LangiumServices, LangiumSharedServices, Module, PartialLangiumServices
 } from 'langium';
+import { parseAndGenerate } from '../cli';
 import { StGeneratedModule, StGeneratedSharedModule } from './generated/module';
 import { StValidator, registerValidationChecks } from './st-validator';
 
@@ -30,6 +32,17 @@ export const StModule: Module<StServices, PartialLangiumServices & StAddedServic
         StValidator: () => new StValidator()
     }
 };
+
+class StContentHandler extends AbstractExecuteCommandHandler {
+    registerCommands(acceptor: ExecuteCommandAcceptor): void {
+        acceptor('generateStJson', args => {
+            console.info('generateStJson called');
+            console.info(args);
+            // invoke generator on this data, and return response
+            return parseAndGenerate(args[0]);
+        });
+    }
+}
 
 /**
  * Create the full set of services required by Langium.
@@ -60,6 +73,8 @@ export function createStServices(context: DefaultSharedModuleContext): {
         StModule
     );
     shared.ServiceRegistry.register(St);
+
+    shared.lsp.ExecuteCommandHandler = new StContentHandler();
     registerValidationChecks(St);
     return { shared, St };
 }

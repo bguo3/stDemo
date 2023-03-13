@@ -50,7 +50,7 @@
     "lint": "eslint src --ext ts",
     "langium:generate": "langium generate",
     "langium:watch": "langium generate --watch",
-    "build:worker": "esbuild --minify ./out/language-server/main-browser.js --bundle --format=iife --outfile=./public/st-server-worker.js",
+    "build:worker": "esbuild ./out/language-server/main-browser.js --bundle --outfile=./public/st-server-worker.js",
     "prepare:public": "npx shx mkdir -p ./public && npx shx cp -fr ./src/static/* ./public/",
     "copy:monaco-editor-wrapper": "npx shx cp -fr ./node_modules/monaco-editor-wrapper/bundle ./public/monaco-editor-wrapper",
     "copy:monaco-workers": "npx shx cp -fr ./node_modules/monaco-editor-workers/dist/ ./public/monaco-editor-workers",
