@@ -4,58 +4,474 @@
  ******************************************************************************/
 
 /* eslint-disable */
-import { AstNode, AbstractAstReflection, Reference, ReferenceInfo, TypeMetaData } from 'langium';
+import { AstNode, AbstractAstReflection, ReferenceInfo, TypeMetaData } from 'langium';
 
-export interface Greeting extends AstNode {
-    readonly $container: Model;
-    readonly $type: 'Greeting';
-    person: Reference<Person>
+export type Expression = And | Assignment | Comparison | Equality | FuncCall | MulOrDiv | Numeric_Literal | Or | PlusOrMinus | Power | Unary_Minus | Unary_Plus | Variable_Call | Xor;
+
+export const Expression = 'Expression';
+
+export function isExpression(item: unknown): item is Expression {
+    return reflection.isInstance(item, Expression);
 }
 
-export const Greeting = 'Greeting';
+export type Func_Access = Pou_Name | Std_Func_Name;
 
-export function isGreeting(item: unknown): item is Greeting {
-    return reflection.isInstance(item, Greeting);
+export const Func_Access = 'Func_Access';
+
+export function isFunc_Access(item: unknown): item is Func_Access {
+    return reflection.isInstance(item, Func_Access);
 }
 
-export interface Model extends AstNode {
-    readonly $type: 'Model';
-    greetings: Array<Greeting>
-    persons: Array<Person>
+export type Std_Func_Name = 'ABS' | 'ACOS' | 'ADD' | 'AND' | 'ASIN' | 'ATAN' | 'ATAN2' | 'CONCAT' | 'COS' | 'DELETE' | 'DIV' | 'EQ' | 'EXP' | 'EXPT' | 'FIND' | 'GE' | 'GT' | 'INSERT' | 'LE' | 'LEFT' | 'LEN' | 'LIMIT' | 'LN' | 'LOG' | 'LT' | 'MAX' | 'MID' | 'MIN' | 'MOD' | 'MOVE' | 'MUL' | 'MUX' | 'NE' | 'NOT' | 'OR' | 'REPLACE' | 'RIGHT' | 'ROL' | 'ROR' | 'SEL' | 'SHL' | 'SHR' | 'SIN' | 'SQRT' | 'SUB' | 'TAN' | 'TRUNC' | 'XOR';
+
+export type Variable_Access = string;
+
+export interface And extends AstNode {
+    readonly $container: And | Assignment | Case_List_Elem | Case_Stmt | Comparison | Else_If_Part | Equality | For_List | IF_Stmt | MulOrDiv | Or | ParameterList | PlusOrMinus | Power | Repeat_Stmt | Stmt | Unary_Minus | Unary_Plus | While_Stmt | Xor;
+    readonly $type: 'And';
+    left: Expression
+    right: Expression
 }
 
-export const Model = 'Model';
+export const And = 'And';
 
-export function isModel(item: unknown): item is Model {
-    return reflection.isInstance(item, Model);
+export function isAnd(item: unknown): item is And {
+    return reflection.isInstance(item, And);
 }
 
-export interface Person extends AstNode {
-    readonly $container: Model;
-    readonly $type: 'Person';
-    name: string
+export interface Assignment extends AstNode {
+    readonly $container: And | Assignment | Case_List_Elem | Case_Stmt | Comparison | Else_If_Part | Equality | For_List | IF_Stmt | MulOrDiv | Or | ParameterList | PlusOrMinus | Power | Repeat_Stmt | Stmt | Unary_Minus | Unary_Plus | While_Stmt | Xor;
+    readonly $type: 'Assignment';
+    left: Expression
+    operator: ':='
+    right: Expression
 }
 
-export const Person = 'Person';
+export const Assignment = 'Assignment';
 
-export function isPerson(item: unknown): item is Person {
-    return reflection.isInstance(item, Person);
+export function isAssignment(item: unknown): item is Assignment {
+    return reflection.isInstance(item, Assignment);
+}
+
+export interface Case_List extends AstNode {
+    readonly $container: Case_Selection;
+    readonly $type: 'Case_List';
+    caseElems: Array<Case_List_Elem>
+}
+
+export const Case_List = 'Case_List';
+
+export function isCase_List(item: unknown): item is Case_List {
+    return reflection.isInstance(item, Case_List);
+}
+
+export interface Case_List_Elem extends AstNode {
+    readonly $container: Case_List;
+    readonly $type: 'Case_List_Elem';
+    begin: Expression
+    end?: Expression
+}
+
+export const Case_List_Elem = 'Case_List_Elem';
+
+export function isCase_List_Elem(item: unknown): item is Case_List_Elem {
+    return reflection.isInstance(item, Case_List_Elem);
+}
+
+export interface Case_Selection extends AstNode {
+    readonly $container: Case_Stmt;
+    readonly $type: 'Case_Selection';
+    caseList: Case_List
+    caseselectionstmtList: Stmt_List
+}
+
+export const Case_Selection = 'Case_Selection';
+
+export function isCase_Selection(item: unknown): item is Case_Selection {
+    return reflection.isInstance(item, Case_Selection);
+}
+
+export interface Comparison extends AstNode {
+    readonly $container: And | Assignment | Case_List_Elem | Case_Stmt | Comparison | Else_If_Part | Equality | For_List | IF_Stmt | MulOrDiv | Or | ParameterList | PlusOrMinus | Power | Repeat_Stmt | Stmt | Unary_Minus | Unary_Plus | While_Stmt | Xor;
+    readonly $type: 'Comparison';
+    left: Expression
+    op: '<' | '<=' | '>' | '>='
+    right: Expression
+}
+
+export const Comparison = 'Comparison';
+
+export function isComparison(item: unknown): item is Comparison {
+    return reflection.isInstance(item, Comparison);
+}
+
+export interface Else_If_Part extends AstNode {
+    readonly $container: IF_Stmt;
+    readonly $type: 'Else_If_Part';
+    condition: Expression
+    elseifstmt: Stmt_List
+}
+
+export const Else_If_Part = 'Else_If_Part';
+
+export function isElse_If_Part(item: unknown): item is Else_If_Part {
+    return reflection.isInstance(item, Else_If_Part);
+}
+
+export interface Equality extends AstNode {
+    readonly $container: And | Assignment | Case_List_Elem | Case_Stmt | Comparison | Else_If_Part | Equality | For_List | IF_Stmt | MulOrDiv | Or | ParameterList | PlusOrMinus | Power | Repeat_Stmt | Stmt | Unary_Minus | Unary_Plus | While_Stmt | Xor;
+    readonly $type: 'Equality';
+    left: Expression
+    op: '<>' | '='
+    right: Expression
+}
+
+export const Equality = 'Equality';
+
+export function isEquality(item: unknown): item is Equality {
+    return reflection.isInstance(item, Equality);
+}
+
+export interface ExpressionsModel extends AstNode {
+    readonly $type: 'ExpressionsModel';
+    elements: Stmt_List
+}
+
+export const ExpressionsModel = 'ExpressionsModel';
+
+export function isExpressionsModel(item: unknown): item is ExpressionsModel {
+    return reflection.isInstance(item, ExpressionsModel);
+}
+
+export interface For_List extends AstNode {
+    readonly $container: For_Stmt;
+    readonly $type: 'For_List';
+    by?: Expression
+    from: Expression
+    to: Expression
+}
+
+export const For_List = 'For_List';
+
+export function isFor_List(item: unknown): item is For_List {
+    return reflection.isInstance(item, For_List);
+}
+
+export interface FuncCall extends AstNode {
+    readonly $container: And | Assignment | Case_List_Elem | Case_Stmt | Comparison | Else_If_Part | Equality | For_List | IF_Stmt | MulOrDiv | Or | ParameterList | PlusOrMinus | Power | Repeat_Stmt | Stmt | Unary_Minus | Unary_Plus | While_Stmt | Xor;
+    readonly $type: 'FuncCall';
+    funcName: Func_Access
+    paramList?: ParameterList
+}
+
+export const FuncCall = 'FuncCall';
+
+export function isFuncCall(item: unknown): item is FuncCall {
+    return reflection.isInstance(item, FuncCall);
+}
+
+export interface MulOrDiv extends AstNode {
+    readonly $container: And | Assignment | Case_List_Elem | Case_Stmt | Comparison | Else_If_Part | Equality | For_List | IF_Stmt | MulOrDiv | Or | ParameterList | PlusOrMinus | Power | Repeat_Stmt | Stmt | Unary_Minus | Unary_Plus | While_Stmt | Xor;
+    readonly $type: 'MulOrDiv';
+    left: Expression
+    op: '*' | '/' | 'MOD'
+    right: Expression
+}
+
+export const MulOrDiv = 'MulOrDiv';
+
+export function isMulOrDiv(item: unknown): item is MulOrDiv {
+    return reflection.isInstance(item, MulOrDiv);
+}
+
+export interface Numeric_Literal extends AstNode {
+    readonly $container: And | Assignment | Case_List_Elem | Case_Stmt | Comparison | Else_If_Part | Equality | For_List | IF_Stmt | MulOrDiv | Or | ParameterList | PlusOrMinus | Power | Repeat_Stmt | Stmt | Unary_Minus | Unary_Plus | While_Stmt | Xor;
+    readonly $type: 'Numeric_Literal';
+    constant: string
+}
+
+export const Numeric_Literal = 'Numeric_Literal';
+
+export function isNumeric_Literal(item: unknown): item is Numeric_Literal {
+    return reflection.isInstance(item, Numeric_Literal);
+}
+
+export interface Or extends AstNode {
+    readonly $container: And | Assignment | Case_List_Elem | Case_Stmt | Comparison | Else_If_Part | Equality | For_List | IF_Stmt | MulOrDiv | Or | ParameterList | PlusOrMinus | Power | Repeat_Stmt | Stmt | Unary_Minus | Unary_Plus | While_Stmt | Xor;
+    readonly $type: 'Or';
+    left: Expression
+    operator: 'OR'
+    right: Expression
+}
+
+export const Or = 'Or';
+
+export function isOr(item: unknown): item is Or {
+    return reflection.isInstance(item, Or);
+}
+
+export interface ParameterList extends AstNode {
+    readonly $container: FuncCall;
+    readonly $type: 'ParameterList';
+    paramAssign: Array<Expression>
+}
+
+export const ParameterList = 'ParameterList';
+
+export function isParameterList(item: unknown): item is ParameterList {
+    return reflection.isInstance(item, ParameterList);
+}
+
+export interface PlusOrMinus extends AstNode {
+    readonly $container: And | Assignment | Case_List_Elem | Case_Stmt | Comparison | Else_If_Part | Equality | For_List | IF_Stmt | MulOrDiv | Or | ParameterList | PlusOrMinus | Power | Repeat_Stmt | Stmt | Unary_Minus | Unary_Plus | While_Stmt | Xor;
+    readonly $type: 'PlusOrMinus';
+    left: Expression
+    op: '+' | '-'
+    right: Expression
+}
+
+export const PlusOrMinus = 'PlusOrMinus';
+
+export function isPlusOrMinus(item: unknown): item is PlusOrMinus {
+    return reflection.isInstance(item, PlusOrMinus);
+}
+
+export interface Pou_Name extends AstNode {
+    readonly $container: FuncCall;
+    readonly $type: 'Pou_Name';
+    pouName: string
+}
+
+export const Pou_Name = 'Pou_Name';
+
+export function isPou_Name(item: unknown): item is Pou_Name {
+    return reflection.isInstance(item, Pou_Name);
+}
+
+export interface Power extends AstNode {
+    readonly $container: And | Assignment | Case_List_Elem | Case_Stmt | Comparison | Else_If_Part | Equality | For_List | IF_Stmt | MulOrDiv | Or | ParameterList | PlusOrMinus | Power | Repeat_Stmt | Stmt | Unary_Minus | Unary_Plus | While_Stmt | Xor;
+    readonly $type: 'Power';
+    left: Expression
+    right: Expression
+}
+
+export const Power = 'Power';
+
+export function isPower(item: unknown): item is Power {
+    return reflection.isInstance(item, Power);
+}
+
+export interface Stmt extends AstNode {
+    readonly $container: Stmt | Stmt_List;
+    readonly $type: 'Case_Stmt' | 'For_Stmt' | 'IF_Stmt' | 'Repeat_Stmt' | 'Stmt' | 'While_Stmt';
+    statement?: Expression | Stmt
+}
+
+export const Stmt = 'Stmt';
+
+export function isStmt(item: unknown): item is Stmt {
+    return reflection.isInstance(item, Stmt);
+}
+
+export interface Stmt_List extends AstNode {
+    readonly $container: Case_Selection | Case_Stmt | Else_If_Part | ExpressionsModel | For_Stmt | IF_Stmt | Repeat_Stmt | While_Stmt;
+    readonly $type: 'Stmt_List';
+    stats: Array<Stmt>
+}
+
+export const Stmt_List = 'Stmt_List';
+
+export function isStmt_List(item: unknown): item is Stmt_List {
+    return reflection.isInstance(item, Stmt_List);
+}
+
+export interface Unary_Minus extends AstNode {
+    readonly $container: And | Assignment | Case_List_Elem | Case_Stmt | Comparison | Else_If_Part | Equality | For_List | IF_Stmt | MulOrDiv | Or | ParameterList | PlusOrMinus | Power | Repeat_Stmt | Stmt | Unary_Minus | Unary_Plus | While_Stmt | Xor;
+    readonly $type: 'Unary_Minus';
+    operand: Expression
+}
+
+export const Unary_Minus = 'Unary_Minus';
+
+export function isUnary_Minus(item: unknown): item is Unary_Minus {
+    return reflection.isInstance(item, Unary_Minus);
+}
+
+export interface Unary_Plus extends AstNode {
+    readonly $container: And | Assignment | Case_List_Elem | Case_Stmt | Comparison | Else_If_Part | Equality | For_List | IF_Stmt | MulOrDiv | Or | ParameterList | PlusOrMinus | Power | Repeat_Stmt | Stmt | Unary_Minus | Unary_Plus | While_Stmt | Xor;
+    readonly $type: 'Unary_Plus';
+    operand: Expression
+}
+
+export const Unary_Plus = 'Unary_Plus';
+
+export function isUnary_Plus(item: unknown): item is Unary_Plus {
+    return reflection.isInstance(item, Unary_Plus);
+}
+
+export interface Variable_Call extends AstNode {
+    readonly $container: And | Assignment | Case_List_Elem | Case_Stmt | Comparison | Else_If_Part | Equality | For_List | IF_Stmt | MulOrDiv | Or | ParameterList | PlusOrMinus | Power | Repeat_Stmt | Stmt | Unary_Minus | Unary_Plus | While_Stmt | Xor;
+    readonly $type: 'Variable_Call';
+    variable: Variable_Access
+}
+
+export const Variable_Call = 'Variable_Call';
+
+export function isVariable_Call(item: unknown): item is Variable_Call {
+    return reflection.isInstance(item, Variable_Call);
+}
+
+export interface Xor extends AstNode {
+    readonly $container: And | Assignment | Case_List_Elem | Case_Stmt | Comparison | Else_If_Part | Equality | For_List | IF_Stmt | MulOrDiv | Or | ParameterList | PlusOrMinus | Power | Repeat_Stmt | Stmt | Unary_Minus | Unary_Plus | While_Stmt | Xor;
+    readonly $type: 'Xor';
+    left: Expression
+    operator: 'XOR'
+    right: Expression
+}
+
+export const Xor = 'Xor';
+
+export function isXor(item: unknown): item is Xor {
+    return reflection.isInstance(item, Xor);
+}
+
+export interface Case_Stmt extends Stmt {
+    readonly $container: Stmt | Stmt_List;
+    readonly $type: 'Case_Stmt';
+    caseControl: Expression
+    caseelsestmtlist?: Stmt_List
+    caseSelection: Array<Case_Selection>
+}
+
+export const Case_Stmt = 'Case_Stmt';
+
+export function isCase_Stmt(item: unknown): item is Case_Stmt {
+    return reflection.isInstance(item, Case_Stmt);
+}
+
+export interface For_Stmt extends Stmt {
+    readonly $container: Stmt | Stmt_List;
+    readonly $type: 'For_Stmt';
+    control: string
+    doStmtList: Stmt_List
+    forRange: For_List
+}
+
+export const For_Stmt = 'For_Stmt';
+
+export function isFor_Stmt(item: unknown): item is For_Stmt {
+    return reflection.isInstance(item, For_Stmt);
+}
+
+export interface IF_Stmt extends Stmt {
+    readonly $container: Stmt | Stmt_List;
+    readonly $type: 'IF_Stmt';
+    condition: Expression
+    elseifpart: Array<Else_If_Part>
+    elsePart?: Stmt_List
+    ifthen: Stmt_List
+}
+
+export const IF_Stmt = 'IF_Stmt';
+
+export function isIF_Stmt(item: unknown): item is IF_Stmt {
+    return reflection.isInstance(item, IF_Stmt);
+}
+
+export interface Repeat_Stmt extends Stmt {
+    readonly $container: Stmt | Stmt_List;
+    readonly $type: 'Repeat_Stmt';
+    doStmtList: Stmt_List
+    until: Expression
+}
+
+export const Repeat_Stmt = 'Repeat_Stmt';
+
+export function isRepeat_Stmt(item: unknown): item is Repeat_Stmt {
+    return reflection.isInstance(item, Repeat_Stmt);
+}
+
+export interface While_Stmt extends Stmt {
+    readonly $container: Stmt | Stmt_List;
+    readonly $type: 'While_Stmt';
+    doStmtList: Stmt_List
+    whileCondition: Expression
+}
+
+export const While_Stmt = 'While_Stmt';
+
+export function isWhile_Stmt(item: unknown): item is While_Stmt {
+    return reflection.isInstance(item, While_Stmt);
 }
 
 export interface StAstType {
-    Greeting: Greeting
-    Model: Model
-    Person: Person
+    And: And
+    Assignment: Assignment
+    Case_List: Case_List
+    Case_List_Elem: Case_List_Elem
+    Case_Selection: Case_Selection
+    Case_Stmt: Case_Stmt
+    Comparison: Comparison
+    Else_If_Part: Else_If_Part
+    Equality: Equality
+    Expression: Expression
+    ExpressionsModel: ExpressionsModel
+    For_List: For_List
+    For_Stmt: For_Stmt
+    FuncCall: FuncCall
+    Func_Access: Func_Access
+    IF_Stmt: IF_Stmt
+    MulOrDiv: MulOrDiv
+    Numeric_Literal: Numeric_Literal
+    Or: Or
+    ParameterList: ParameterList
+    PlusOrMinus: PlusOrMinus
+    Pou_Name: Pou_Name
+    Power: Power
+    Repeat_Stmt: Repeat_Stmt
+    Stmt: Stmt
+    Stmt_List: Stmt_List
+    Unary_Minus: Unary_Minus
+    Unary_Plus: Unary_Plus
+    Variable_Call: Variable_Call
+    While_Stmt: While_Stmt
+    Xor: Xor
 }
 
 export class StAstReflection extends AbstractAstReflection {
 
     getAllTypes(): string[] {
-        return ['Greeting', 'Model', 'Person'];
+        return ['And', 'Assignment', 'Case_List', 'Case_List_Elem', 'Case_Selection', 'Case_Stmt', 'Comparison', 'Else_If_Part', 'Equality', 'Expression', 'ExpressionsModel', 'For_List', 'For_Stmt', 'FuncCall', 'Func_Access', 'IF_Stmt', 'MulOrDiv', 'Numeric_Literal', 'Or', 'ParameterList', 'PlusOrMinus', 'Pou_Name', 'Power', 'Repeat_Stmt', 'Stmt', 'Stmt_List', 'Unary_Minus', 'Unary_Plus', 'Variable_Call', 'While_Stmt', 'Xor'];
     }
 
     protected override computeIsSubtype(subtype: string, supertype: string): boolean {
         switch (subtype) {
+            case And:
+            case Assignment:
+            case Comparison:
+            case Equality:
+            case FuncCall:
+            case MulOrDiv:
+            case Numeric_Literal:
+            case Or:
+            case PlusOrMinus:
+            case Power:
+            case Unary_Minus:
+            case Unary_Plus:
+            case Variable_Call:
+            case Xor: {
+                return this.isSubtype(Expression, supertype);
+            }
+            case Pou_Name: {
+                return this.isSubtype(Func_Access, supertype);
+            }
+            case Case_Stmt:
+            case For_Stmt:
+            case IF_Stmt:
+            case Repeat_Stmt:
+            case While_Stmt: {
+                return this.isSubtype(Stmt, supertype);
+            }
             default: {
                 return false;
             }
@@ -65,9 +481,6 @@ export class StAstReflection extends AbstractAstReflection {
     getReferenceType(refInfo: ReferenceInfo): string {
         const referenceId = `${refInfo.container.$type}:${refInfo.property}`;
         switch (referenceId) {
-            case 'Greeting:person': {
-                return Person;
-            }
             default: {
                 throw new Error(`${referenceId} is not a valid reference id.`);
             }
@@ -76,12 +489,43 @@ export class StAstReflection extends AbstractAstReflection {
 
     getTypeMetaData(type: string): TypeMetaData {
         switch (type) {
-            case 'Model': {
+            case 'Case_List': {
                 return {
-                    name: 'Model',
+                    name: 'Case_List',
                     mandatory: [
-                        { name: 'greetings', type: 'array' },
-                        { name: 'persons', type: 'array' }
+                        { name: 'caseElems', type: 'array' }
+                    ]
+                };
+            }
+            case 'ParameterList': {
+                return {
+                    name: 'ParameterList',
+                    mandatory: [
+                        { name: 'paramAssign', type: 'array' }
+                    ]
+                };
+            }
+            case 'Stmt_List': {
+                return {
+                    name: 'Stmt_List',
+                    mandatory: [
+                        { name: 'stats', type: 'array' }
+                    ]
+                };
+            }
+            case 'Case_Stmt': {
+                return {
+                    name: 'Case_Stmt',
+                    mandatory: [
+                        { name: 'caseSelection', type: 'array' }
+                    ]
+                };
+            }
+            case 'IF_Stmt': {
+                return {
+                    name: 'IF_Stmt',
+                    mandatory: [
+                        { name: 'elseifpart', type: 'array' }
                     ]
                 };
             }

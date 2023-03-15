@@ -4,8 +4,8 @@ import {
     LangiumServices, LangiumSharedServices, Module, PartialLangiumServices
 } from 'langium';
 import { parseAndGenerate } from '../cli';
-import { StGeneratedModule, StGeneratedSharedModule } from './generated/module';
-import { StValidator, registerValidationChecks } from './st-validator';
+import { STGeneratedModule, StGeneratedSharedModule } from './generated/module';
+import { StValidator } from './st-validator';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -69,12 +69,12 @@ export function createStServices(context: DefaultSharedModuleContext): {
     );
     const St = inject(
         createDefaultModule({ shared }),
-        StGeneratedModule,
+        STGeneratedModule,
         StModule
     );
     shared.ServiceRegistry.register(St);
 
     shared.lsp.ExecuteCommandHandler = new StContentHandler();
-    registerValidationChecks(St);
+    // registerValidationChecks(St);
     return { shared, St };
 }

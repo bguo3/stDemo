@@ -14,50 +14,52 @@ const editorConfig = client.getEditorConfig();
 editorConfig.setMainLanguageId("st");
 
 editorConfig.setMonarchTokensProvider({
-  keywords: ["Hello", "person"],
-  operators: ["!"],
-  symbols: /!/,
-
+  keywords: [
+      'ABS','ACOS','ADD','AND','ASIN','ATAN','ATAN2','BY','CASE','CONCAT','CONTINUE','COS','DELETE','DIV','DO','ELSE','ELSIF','END_CASE','END_FOR','END_IF','END_REPEAT','END_WHILE','EQ','EXIT','EXP','EXPT','FIND','FOR','GE','GT','IF','INSERT','LE','LEFT','LEN','LIMIT','LN','LOG','LT','MAX','MID','MIN','MOD','MOVE','MUL','MUX','NE','NOT','OF','OR','REPEAT','REPLACE','RETURN','RIGHT','ROL','ROR','SEL','SHL','SHR','SIN','SQRT','SUB','TAN','THEN','TO','TRUNC','UNTIL','WHILE','XOR'
+  ],
+  operators: [
+      '-',',',';',':',':=','..','*','**','/','&','+','<','<=','<>','=','>','>='
+  ],
+  symbols:  /-/,
   tokenizer: {
-    initial: [
-      {
-        regex: /[_a-zA-Z][\w_]*/,
-        action: {
-          cases: {
-            "@keywords": { token: "keyword" },
-            "@default": { token: "ID" },
+      initial: [
+        {
+          regex: /[_a-zA-Z][\w_]*/,
+          action: {
+            cases: {
+              "@keywords": { token: "keyword" },
+              "@default": { token: "ID" },
+            },
           },
         },
-      },
-      { regex: /[0-9]+/, action: { token: "number" } },
-      { regex: /"[^"]*"|'[^']*'/, action: { token: "string" } },
-      { include: "@whitespace" },
-      {
-        regex: /@symbols/,
-        action: {
-          cases: {
-            "@operators": { token: "operator" },
-            "@default": { token: "" },
+        { regex: /[0-9]+/, action: { token: "number" } },
+        { regex: /"[^"]*"|'[^']*'/, action: { token: "string" } },
+        { include: "@whitespace" },
+        {
+          regex: /@symbols/,
+          action: {
+            cases: {
+              "@operators": { token: "operator" },
+              "@default": { token: "" },
+            },
           },
         },
-      },
-    ],
-    whitespace: [
-      { regex: /\s+/, action: { token: "white" } },
-      { regex: /\/\*/, action: { token: "comment", next: "@comment" } },
-      { regex: /\/\/[^\n\r]*/, action: { token: "comment" } },
-    ],
-    comment: [
-      { regex: /[^\/\*]+/, action: { token: "comment" } },
-      { regex: /\*\//, action: { token: "comment", next: "@pop" } },
-      { regex: /[\/\*]/, action: { token: "comment" } },
-    ],
-  },
-});
+      ],
+      whitespace: [
+        { regex: /\s+/, action: { token: "white" } },
+        { regex: /\/\*/, action: { token: "comment", next: "@comment" } },
+        { regex: /\/\/[^\n\r]*/, action: { token: "comment" } },
+      ],
+      comment: [
+        { regex: /[^\/\*]+/, action: { token: "comment" } },
+        { regex: /\*\//, action: { token: "comment", next: "@pop" } },
+        { regex: /[\/\*]/, action: { token: "comment" } },
+      ],
+    },
+  });
 
 editorConfig.setMainCode(`
-person Aaa
-Hello Aaa!
+ABS aa bb
 `);
 
 editorConfig.theme = "vs-dark";

@@ -5,9 +5,9 @@
 
 import { LangiumGeneratedServices, LangiumGeneratedSharedServices, LangiumSharedServices, LangiumServices, LanguageMetaData, Module } from 'langium';
 import { StAstReflection } from './ast';
-import { StGrammar } from './grammar';
+import { STGrammar } from './grammar';
 
-export const StLanguageMetaData: LanguageMetaData = {
+export const STLanguageMetaData: LanguageMetaData = {
     languageId: 'st',
     fileExtensions: ['.st'],
     caseInsensitive: false
@@ -17,8 +17,8 @@ export const StGeneratedSharedModule: Module<LangiumSharedServices, LangiumGener
     AstReflection: () => new StAstReflection()
 };
 
-export const StGeneratedModule: Module<LangiumServices, LangiumGeneratedServices> = {
-    Grammar: () => StGrammar(),
-    LanguageMetaData: () => StLanguageMetaData,
+export const STGeneratedModule: Module<LangiumServices, LangiumGeneratedServices> = {
+    Grammar: () => STGrammar(),
+    LanguageMetaData: () => STLanguageMetaData,
     parser: {}
 };

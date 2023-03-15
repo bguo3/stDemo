@@ -1,9 +1,9 @@
-import { Model } from '../language-server/generated/ast';
+import { ExpressionsModel } from '../language-server/generated/ast';
 
-export function generateJavaScript(model: Model): string {
+export function generateJavaScript(model: ExpressionsModel): string {
     console.log('generateJavaScript 1')
-    const persons = model.persons ;
-    console.log(persons[0])
+    const persons = model.elements ;
+    console.log(persons)
     console.log('generateJavaScript 2')
-    return persons[0].name;
+    return "";
 }
