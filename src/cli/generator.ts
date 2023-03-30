@@ -1,9 +1,29 @@
 import { Model } from '../language-server/generated/ast';
 
 export function generateJavaScript(model: Model): string {
-    console.log('generateJavaScript 1')
-    const persons = model.persons ;
-    console.log(persons[0])
-    console.log('generateJavaScript 2')
-    return persons[0].name;
+    const rungs = model.rungs ;
+    console.log(rungs[0])
+    const json =`{
+        "Rungs": [
+            {
+                "Rung": [
+                    {
+                        "TON": "a,b,c"
+                    },
+                    {
+                        "ADD": "var1,var2,var3"
+                    }
+                ]
+            },
+            {
+                "Rung": [
+                    {
+                        "XIC": "d",
+                        "OTE": "e"
+                    }
+                ]
+            }
+        ]
+    }`;
+    return json ;
 }

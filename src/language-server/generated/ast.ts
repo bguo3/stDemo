@@ -4,24 +4,74 @@
  ******************************************************************************/
 
 /* eslint-disable */
-import { AstNode, AbstractAstReflection, Reference, ReferenceInfo, TypeMetaData } from 'langium';
+import { AstNode, AbstractAstReflection, ReferenceInfo, TypeMetaData } from 'langium';
 
-export interface Greeting extends AstNode {
-    readonly $container: Model;
-    readonly $type: 'Greeting';
-    person: Reference<Person>
+export interface BranchStatement extends AstNode {
+    readonly $container: InstructionStatement | SubBranchStatement;
+    readonly $type: 'BranchStatement';
+    function?: FunctionCall
+    function2?: FunctionCall
+    subBranch: SubBranchStatement
 }
 
-export const Greeting = 'Greeting';
+export const BranchStatement = 'BranchStatement';
 
-export function isGreeting(item: unknown): item is Greeting {
-    return reflection.isInstance(item, Greeting);
+export function isBranchStatement(item: unknown): item is BranchStatement {
+    return reflection.isInstance(item, BranchStatement);
+}
+
+export interface ConstantParameter extends AstNode {
+    readonly $container: Parameter;
+    readonly $type: 'ConstantParameter';
+    constParameter: number
+}
+
+export const ConstantParameter = 'ConstantParameter';
+
+export function isConstantParameter(item: unknown): item is ConstantParameter {
+    return reflection.isInstance(item, ConstantParameter);
+}
+
+export interface FunctionCall extends AstNode {
+    readonly $container: BranchStatement | InstructionStatement | SubBranchStatement;
+    readonly $type: 'FunctionCall';
+    name: FunctionName
+    params: ParameterList
+}
+
+export const FunctionCall = 'FunctionCall';
+
+export function isFunctionCall(item: unknown): item is FunctionCall {
+    return reflection.isInstance(item, FunctionCall);
+}
+
+export interface FunctionName extends AstNode {
+    readonly $container: FunctionCall;
+    readonly $type: 'FunctionName';
+    name: 'ADD' | 'CTU' | 'OTE' | 'TON' | 'XIC' | string
+}
+
+export const FunctionName = 'FunctionName';
+
+export function isFunctionName(item: unknown): item is FunctionName {
+    return reflection.isInstance(item, FunctionName);
+}
+
+export interface InstructionStatement extends AstNode {
+    readonly $container: Rung;
+    readonly $type: 'InstructionStatement';
+    instructionStatement: BranchStatement | FunctionCall | UnknownFunctionCall
+}
+
+export const InstructionStatement = 'InstructionStatement';
+
+export function isInstructionStatement(item: unknown): item is InstructionStatement {
+    return reflection.isInstance(item, InstructionStatement);
 }
 
 export interface Model extends AstNode {
     readonly $type: 'Model';
-    greetings: Array<Greeting>
-    persons: Array<Person>
+    rungs: Array<Rung>
 }
 
 export const Model = 'Model';
@@ -30,28 +80,98 @@ export function isModel(item: unknown): item is Model {
     return reflection.isInstance(item, Model);
 }
 
-export interface Person extends AstNode {
+export interface Parameter extends AstNode {
+    readonly $container: ParameterList;
+    readonly $type: 'Parameter';
+    param: ConstantParameter | VariableAccess
+}
+
+export const Parameter = 'Parameter';
+
+export function isParameter(item: unknown): item is Parameter {
+    return reflection.isInstance(item, Parameter);
+}
+
+export interface ParameterList extends AstNode {
+    readonly $container: FunctionCall;
+    readonly $type: 'ParameterList';
+    parameterList: Array<Parameter>
+}
+
+export const ParameterList = 'ParameterList';
+
+export function isParameterList(item: unknown): item is ParameterList {
+    return reflection.isInstance(item, ParameterList);
+}
+
+export interface Rung extends AstNode {
     readonly $container: Model;
-    readonly $type: 'Person';
+    readonly $type: 'Rung';
+    instrunctions: Array<InstructionStatement>
+}
+
+export const Rung = 'Rung';
+
+export function isRung(item: unknown): item is Rung {
+    return reflection.isInstance(item, Rung);
+}
+
+export interface SubBranchStatement extends AstNode {
+    readonly $container: BranchStatement;
+    readonly $type: 'SubBranchStatement';
+    branch?: BranchStatement
+    function?: FunctionCall
+}
+
+export const SubBranchStatement = 'SubBranchStatement';
+
+export function isSubBranchStatement(item: unknown): item is SubBranchStatement {
+    return reflection.isInstance(item, SubBranchStatement);
+}
+
+export interface UnknownFunctionCall extends AstNode {
+    readonly $container: InstructionStatement;
+    readonly $type: 'UnknownFunctionCall';
+    unknownFuction: string
+}
+
+export const UnknownFunctionCall = 'UnknownFunctionCall';
+
+export function isUnknownFunctionCall(item: unknown): item is UnknownFunctionCall {
+    return reflection.isInstance(item, UnknownFunctionCall);
+}
+
+export interface VariableAccess extends AstNode {
+    readonly $container: Parameter;
+    readonly $type: 'VariableAccess';
     name: string
 }
 
-export const Person = 'Person';
+export const VariableAccess = 'VariableAccess';
 
-export function isPerson(item: unknown): item is Person {
-    return reflection.isInstance(item, Person);
+export function isVariableAccess(item: unknown): item is VariableAccess {
+    return reflection.isInstance(item, VariableAccess);
 }
 
 export interface StAstType {
-    Greeting: Greeting
+    BranchStatement: BranchStatement
+    ConstantParameter: ConstantParameter
+    FunctionCall: FunctionCall
+    FunctionName: FunctionName
+    InstructionStatement: InstructionStatement
     Model: Model
-    Person: Person
+    Parameter: Parameter
+    ParameterList: ParameterList
+    Rung: Rung
+    SubBranchStatement: SubBranchStatement
+    UnknownFunctionCall: UnknownFunctionCall
+    VariableAccess: VariableAccess
 }
 
 export class StAstReflection extends AbstractAstReflection {
 
     getAllTypes(): string[] {
-        return ['Greeting', 'Model', 'Person'];
+        return ['BranchStatement', 'ConstantParameter', 'FunctionCall', 'FunctionName', 'InstructionStatement', 'Model', 'Parameter', 'ParameterList', 'Rung', 'SubBranchStatement', 'UnknownFunctionCall', 'VariableAccess'];
     }
 
     protected override computeIsSubtype(subtype: string, supertype: string): boolean {
@@ -65,9 +185,6 @@ export class StAstReflection extends AbstractAstReflection {
     getReferenceType(refInfo: ReferenceInfo): string {
         const referenceId = `${refInfo.container.$type}:${refInfo.property}`;
         switch (referenceId) {
-            case 'Greeting:person': {
-                return Person;
-            }
             default: {
                 throw new Error(`${referenceId} is not a valid reference id.`);
             }
@@ -80,8 +197,23 @@ export class StAstReflection extends AbstractAstReflection {
                 return {
                     name: 'Model',
                     mandatory: [
-                        { name: 'greetings', type: 'array' },
-                        { name: 'persons', type: 'array' }
+                        { name: 'rungs', type: 'array' }
+                    ]
+                };
+            }
+            case 'ParameterList': {
+                return {
+                    name: 'ParameterList',
+                    mandatory: [
+                        { name: 'parameterList', type: 'array' }
+                    ]
+                };
+            }
+            case 'Rung': {
+                return {
+                    name: 'Rung',
+                    mandatory: [
+                        { name: 'instrunctions', type: 'array' }
                     ]
                 };
             }

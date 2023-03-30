@@ -4,7 +4,7 @@ import {
     LangiumServices, LangiumSharedServices, Module, PartialLangiumServices
 } from 'langium';
 import { parseAndGenerate } from '../cli';
-import { StGeneratedModule, StGeneratedSharedModule } from './generated/module';
+import { AsciiGeneratedModule, StGeneratedSharedModule } from './generated/module';
 import { StValidator, registerValidationChecks } from './st-validator';
 
 /**
@@ -36,8 +36,6 @@ export const StModule: Module<StServices, PartialLangiumServices & StAddedServic
 class StContentHandler extends AbstractExecuteCommandHandler {
     registerCommands(acceptor: ExecuteCommandAcceptor): void {
         acceptor('generateStJson', args => {
-            console.info('generateStJson called');
-            console.info(args);
             // invoke generator on this data, and return response
             return parseAndGenerate(args[0]);
         });
@@ -69,7 +67,7 @@ export function createStServices(context: DefaultSharedModuleContext): {
     );
     const St = inject(
         createDefaultModule({ shared }),
-        StGeneratedModule,
+        AsciiGeneratedModule,
         StModule
     );
     shared.ServiceRegistry.register(St);

@@ -5,44 +5,27 @@
 
 import { loadGrammarFromJson, Grammar } from 'langium';
 
-let loadedStGrammar: Grammar | undefined;
-export const StGrammar = (): Grammar => loadedStGrammar ?? (loadedStGrammar = loadGrammarFromJson(`{
+let loadedAsciiGrammar: Grammar | undefined;
+export const AsciiGrammar = (): Grammar => loadedAsciiGrammar ?? (loadedAsciiGrammar = loadGrammarFromJson(`{
   "$type": "Grammar",
   "isDeclared": true,
-  "name": "St",
+  "name": "Ascii",
   "rules": [
     {
       "$type": "ParserRule",
       "name": "Model",
       "entry": true,
       "definition": {
-        "$type": "Alternatives",
-        "elements": [
-          {
-            "$type": "Assignment",
-            "feature": "persons",
-            "operator": "+=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$ref": "#/rules@1"
-              },
-              "arguments": []
-            }
+        "$type": "Assignment",
+        "feature": "rungs",
+        "operator": "+=",
+        "terminal": {
+          "$type": "RuleCall",
+          "rule": {
+            "$ref": "#/rules@1"
           },
-          {
-            "$type": "Assignment",
-            "feature": "greetings",
-            "operator": "+=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$ref": "#/rules@2"
-              },
-              "arguments": []
-            }
-          }
-        ],
+          "arguments": []
+        },
         "cardinality": "*"
       },
       "definesHiddenTokens": false,
@@ -53,14 +36,86 @@ export const StGrammar = (): Grammar => loadedStGrammar ?? (loadedStGrammar = lo
     },
     {
       "$type": "ParserRule",
-      "name": "Person",
+      "name": "Rung",
       "definition": {
         "$type": "Group",
         "elements": [
           {
-            "$type": "Keyword",
-            "value": "person"
+            "$type": "Assignment",
+            "feature": "instrunctions",
+            "operator": "+=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@2"
+              },
+              "arguments": []
+            },
+            "cardinality": "*"
           },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$ref": "#/rules@17"
+            },
+            "arguments": []
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "InstructionStatement",
+      "definition": {
+        "$type": "Assignment",
+        "feature": "instructionStatement",
+        "operator": "=",
+        "terminal": {
+          "$type": "Alternatives",
+          "elements": [
+            {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@3"
+              },
+              "arguments": []
+            },
+            {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@11"
+              },
+              "arguments": []
+            },
+            {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@9"
+              },
+              "arguments": []
+            }
+          ]
+        }
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "FunctionCall",
+      "definition": {
+        "$type": "Group",
+        "elements": [
           {
             "$type": "Assignment",
             "feature": "name",
@@ -69,6 +124,18 @@ export const StGrammar = (): Grammar => loadedStGrammar ?? (loadedStGrammar = lo
               "$type": "RuleCall",
               "rule": {
                 "$ref": "#/rules@4"
+              },
+              "arguments": []
+            }
+          },
+          {
+            "$type": "Assignment",
+            "feature": "params",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@5"
               },
               "arguments": []
             }
@@ -84,36 +151,280 @@ export const StGrammar = (): Grammar => loadedStGrammar ?? (loadedStGrammar = lo
     },
     {
       "$type": "ParserRule",
-      "name": "Greeting",
+      "name": "FunctionName",
+      "definition": {
+        "$type": "Assignment",
+        "feature": "name",
+        "operator": "=",
+        "terminal": {
+          "$type": "Alternatives",
+          "elements": [
+            {
+              "$type": "Keyword",
+              "value": "TON"
+            },
+            {
+              "$type": "Keyword",
+              "value": "CTU"
+            },
+            {
+              "$type": "Keyword",
+              "value": "ADD"
+            },
+            {
+              "$type": "Keyword",
+              "value": "XIC"
+            },
+            {
+              "$type": "Keyword",
+              "value": "OTE"
+            },
+            {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@16"
+              },
+              "arguments": []
+            }
+          ]
+        }
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "ParameterList",
+      "definition": {
+        "$type": "Assignment",
+        "feature": "parameterList",
+        "operator": "+=",
+        "terminal": {
+          "$type": "RuleCall",
+          "rule": {
+            "$ref": "#/rules@6"
+          },
+          "arguments": []
+        },
+        "cardinality": "*"
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "Parameter",
+      "definition": {
+        "$type": "Assignment",
+        "feature": "param",
+        "operator": "=",
+        "terminal": {
+          "$type": "Alternatives",
+          "elements": [
+            {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@7"
+              },
+              "arguments": []
+            },
+            {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@8"
+              },
+              "arguments": []
+            }
+          ]
+        }
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "VariableAccess",
+      "definition": {
+        "$type": "Assignment",
+        "feature": "name",
+        "operator": "=",
+        "terminal": {
+          "$type": "RuleCall",
+          "rule": {
+            "$ref": "#/rules@13"
+          },
+          "arguments": []
+        }
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "ConstantParameter",
+      "definition": {
+        "$type": "Assignment",
+        "feature": "constParameter",
+        "operator": "=",
+        "terminal": {
+          "$type": "RuleCall",
+          "rule": {
+            "$ref": "#/rules@14"
+          },
+          "arguments": []
+        }
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "BranchStatement",
       "definition": {
         "$type": "Group",
         "elements": [
           {
             "$type": "Keyword",
-            "value": "Hello"
+            "value": "BST"
           },
           {
             "$type": "Assignment",
-            "feature": "person",
+            "feature": "function",
             "operator": "=",
             "terminal": {
-              "$type": "CrossReference",
-              "type": {
-                "$ref": "#/rules@1"
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@3"
               },
-              "terminal": {
-                "$type": "RuleCall",
-                "rule": {
-                  "$ref": "#/rules@4"
-                },
-                "arguments": []
+              "arguments": []
+            },
+            "cardinality": "*"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "subBranch",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@10"
               },
-              "deprecatedSyntax": false
-            }
+              "arguments": []
+            },
+            "cardinality": "+"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "function2",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@3"
+              },
+              "arguments": []
+            },
+            "cardinality": "*"
           },
           {
             "$type": "Keyword",
-            "value": "!"
+            "value": "BND"
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "SubBranchStatement",
+      "definition": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Keyword",
+            "value": "NXB"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "function",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@3"
+              },
+              "arguments": []
+            },
+            "cardinality": "*"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "branch",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@9"
+              },
+              "arguments": []
+            },
+            "cardinality": "*"
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "UnknownFunctionCall",
+      "definition": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Keyword",
+            "value": "UNK"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "unknownFuction",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@15"
+              },
+              "arguments": []
+            }
           }
         ]
       },
@@ -130,7 +441,7 @@ export const StGrammar = (): Grammar => loadedStGrammar ?? (loadedStGrammar = lo
       "name": "WS",
       "definition": {
         "$type": "RegexToken",
-        "regex": "\\\\s+"
+        "regex": "[ \\\\t\\\\r]+"
       },
       "fragment": false
     },
@@ -164,6 +475,26 @@ export const StGrammar = (): Grammar => loadedStGrammar ?? (loadedStGrammar = lo
       "definition": {
         "$type": "RegexToken",
         "regex": "\\"[^\\"]*\\"|'[^']*'"
+      },
+      "fragment": false,
+      "hidden": false
+    },
+    {
+      "$type": "TerminalRule",
+      "name": "Operator",
+      "definition": {
+        "$type": "RegexToken",
+        "regex": "\\"+-*\\\\/\\""
+      },
+      "fragment": false,
+      "hidden": false
+    },
+    {
+      "$type": "TerminalRule",
+      "name": "RETURN",
+      "definition": {
+        "$type": "RegexToken",
+        "regex": "\\\\r?\\\\n"
       },
       "fragment": false,
       "hidden": false

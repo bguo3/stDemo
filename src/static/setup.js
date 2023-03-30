@@ -13,53 +13,53 @@ const client = new MonacoEditorLanguageClientWrapper();
 const editorConfig = client.getEditorConfig();
 editorConfig.setMainLanguageId("st");
 
-editorConfig.setMonarchTokensProvider({
-  keywords: ["Hello", "person"],
-  operators: ["!"],
-  symbols: /!/,
+editorConfig.setMonarchTokensProvider( {keywords: [
+  'ADD','BND','BST','CTU','NXB','OTE','TON','UNK','XIC'
+],
+operators: [
 
-  tokenizer: {
-    initial: [
-      {
-        regex: /[_a-zA-Z][\w_]*/,
-        action: {
-          cases: {
-            "@keywords": { token: "keyword" },
-            "@default": { token: "ID" },
-          },
-        },
-      },
-      { regex: /[0-9]+/, action: { token: "number" } },
-      { regex: /"[^"]*"|'[^']*'/, action: { token: "string" } },
-      { include: "@whitespace" },
-      {
-        regex: /@symbols/,
-        action: {
-          cases: {
-            "@operators": { token: "operator" },
-            "@default": { token: "" },
-          },
-        },
-      },
-    ],
-    whitespace: [
-      { regex: /\s+/, action: { token: "white" } },
-      { regex: /\/\*/, action: { token: "comment", next: "@comment" } },
-      { regex: /\/\/[^\n\r]*/, action: { token: "comment" } },
-    ],
-    comment: [
-      { regex: /[^\/\*]+/, action: { token: "comment" } },
-      { regex: /\*\//, action: { token: "comment", next: "@pop" } },
-      { regex: /[\/\*]/, action: { token: "comment" } },
-    ],
-  },
-});
+],
+symbols: '',
+
+tokenizer: {
+  initial: [
+      { regex: /[_a-zA-Z][\w_]*/, action: { cases: { '@keywords': {"token":"keyword"}, '@default': {"token":"ID"} }} },
+      { regex: /[0-9]+/, action: {"token":"number"} },
+      { regex: /"[^"]*"|'[^']*'/, action: {"token":"string"} },
+      { regex: /"+-*\/"/, action: {"token":"Operator"} },
+      { regex: /\r?\n/, action: {"token":"RETURN"} },
+      { include: '@whitespace' },
+      { regex: /@symbols/, action: { cases: { '@operators': {"token":"operator"}, '@default': {"token":""} }} },
+  ],
+  whitespace: [
+      { regex: /[ \t\r]+/, action: {"token":"white"} },
+      { regex: /\/\*/, action: {"token":"comment","next":"@comment"} },
+      { regex: /\/\/[^\n\r]*/, action: {"token":"comment"} },
+  ],
+  comment: [
+      { regex: /[^\/\*]+/, action: {"token":"comment"} },
+      { regex: /\*\//, action: {"token":"comment","next":"@pop"} },
+      { regex: /[\/\*]/, action: {"token":"comment"} },
+  ],
+}});
+
+// editorConfig.setMainCode(`
+// person Aaa
+// Hello Aaa!
+// `);
 
 editorConfig.setMainCode(`
-person Aaa
-Hello Aaa!
-`);
 
+//Please hit enter when you finish one rung
+
+BST TON a b c NXB ADD var1 var2 var3 BND
+
+XIC d OTE e
+
+
+
+
+`);
 editorConfig.theme = "vs-dark";
 editorConfig.useLanguageClient = true;
 editorConfig.useWebSocket = false;
@@ -84,22 +84,16 @@ const generateAndDisplay = (() => {
         return;
     }
     running = true;
-
-    console.info('generating & running current code...');
     const value = client.editor.getValue();
-    console.info(value);
     if (window.localStorage) {
         window.localStorage.setItem('mainCode', value);
     }
     // execute custom command, and receive the response
     vscode.commands.executeCommand('generateStJson', value).then((stJson) => {
-      console.info('====================');
       console.info(stJson);
-      console.info('====================');
     }).catch((e) => {
       console.error(e);
     }).finally(() => {
-        console.info('done...');
         running = false;
     });
 });

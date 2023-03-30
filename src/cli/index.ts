@@ -5,7 +5,6 @@ import { createStServices } from '../language-server/st-module';
 import { generateJavaScript } from './generator';
 
 export const parseAndGenerate = async (stContent: string): Promise<string> => {
-    console.info(stContent);
     const services = createStServices(EmptyFileSystem).St;
     const model = await extractAstNodeFromString<Model>(stContent, services);
     // generate mini logo drawing commands from the model
